@@ -17,13 +17,24 @@ app.post("/api/whatsapp/webhook", async (req, res) => {
     const from = req.body.From;
     const msg = req.body.Body;
 
-    console.log("Incoming message:", msg);
+    console.log("Incoming text message:", msg);
+
+    // ✅ Handle media (audio/image/video)
+    if (req.body.NumMedia && parseInt(req.body.NumMedia) > 0) {
+      console.log(`📎 ${req.body.NumMedia} media file(s) received`);
+
+      for (let i = 0; i < req.body.NumMedia; i++) {
+        const mediaUrl = req.body[`MediaUrl${i}`];
+        const mediaType = req.body[`MediaContentType${i}`];
+        console.log(`➡️ Media ${i + 1}: ${mediaUrl} (type: ${mediaType})`);
+      }
+    }
 
     // Quick reply logic
     let reply = "Hello 👋 I am Mina, your MoM assistant.";
-    if (msg.toLowerCase().includes("start")) {
+    if (msg && msg.toLowerCase().includes("start")) {
       reply = "Please send me the meeting audio file 🎤";
-    } else if (msg.toLowerCase().includes("hello")) {
+    } else if (msg && msg.toLowerCase().includes("hello")) {
       reply = "Hi there! 👋 Say 'start' to begin MoM recording.";
     }
 
